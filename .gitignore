@@ -5,3 +5,4 @@
 *.dvi
 *.nav
 *.snm
+.DS_Store

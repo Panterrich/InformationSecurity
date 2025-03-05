@@ -1,0 +1,276 @@
+\documentclass[10pt]{beamer}
+
+\usepackage{paratype}
+\RequirePackage{cmap}
+\RequirePackage[T2A]{fontenc}
+\RequirePackage[utf8]{inputenc}
+
+% Set up fonts
+%\RequirePackage{paratype} % Arial-like sans serif font
+%\RequirePackage{DejaVuSansMono} % Free widespread monospace font with cyrillic support
+%\RequirePackage{nimbussans} % Helvetica clone
+\RequirePackage[bold,light]{nimbusmono} % Courier clone
+%\RequirePackage{tempora}  % "Times" font
+
+\RequirePackage[english,russian]{babel}
+
+\usepackage{amsmath,mathrsfs,amsfonts,amssymb, mathtools}
+\usepackage{graphicx, epsfig}
+\usepackage{subfig}
+\usepackage{setspace}
+\usepackage{multirow}
+\captionsetup{labelformat=empty}
+\usepackage{wrapfig}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\usepackage{color, colortbl}
+\definecolor{lightRed}{RGB}{240, 170, 150}
+\definecolor{lightGreen}{RGB}{170, 230, 150}
+\definecolor{lightYellow}{RGB}{240, 230, 180}
+
+\usepackage{changepage}
+
+\setbeamerfont{frametitle}{size=\normalsize,family=\sffamily}
+\usetheme{Warsaw}%{Singapore}%{Warsaw}%{Warsaw}%{Darmstadt}
+\usecolortheme{sidebartab}
+\setbeamertemplate{footline}[author]
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+	\insertshorttitle\hfill%
+	\insertframenumber\,/\,\inserttotalframenumber}
+
+\definecolor{beamer@blendedblue}{RGB}{3,91,170}
+\setbeamercolor{color1}{bg=beamer@blendedblue,fg=white}
+% отключить клавиши навигации
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage{appendixnumberbeamer}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage{svg}
+\usepackage{todonotes}
+
+\AtBeginSection[]{}
+
+\setbeamertemplate{section in toc}{%
+  \alert{$\bullet$}~\inserttocsection}
+
+\graphicspath{{images/}{images2/}{../images/}}
+
+\usepackage{makecell}
+\usepackage{changepage}
+
+\title[]{Задание по RBAC}
+%\subtitle{Подназвание доклада}
+
+\author{Дурнов Алексей Николаевич}
+
+% Russian
+\institute[МФТИ]{
+    Московский физико-технический институт\\
+    Физтех-школа радиотехники и компьютерных технологий\\
+}
+\vspace{100pt}
+\date{Москва, 2025 г.}
+
+% English
+% \institute{ISP RAS}
+% \titlegraphic{\hfill\includegraphics[height=0.5cm]{logo_isp_en.png}}
+
+\setbeamercolor{footline}{fg=black}
+\setbeamerfont{footline}{series=\bfseries}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+    \thispagestyle{empty}
+\end{frame}
+
+\begin{frame}{Состав персонала}
+    \begin{enumerate}
+        \item Руководство и менеджмент (CEO, CTO, COO, PM)
+        \item Разработка (TechLead, Senior, Middle, Junior, QA, DevOps, UI/UX)
+        \item Поддержка и инфраструктура (Сис. админ, Support)
+        \item Отделы бизнеса и маркетинга (Product, Sales, Marketing Managers)
+        \item Финансовый и административный блок (CFO, HR, Office Manager)
+        \item Дополнительные роли (Data analyst, Legal Advisor)
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Активы компании}
+    Выберем основной набор активов обычной IT-компании:
+    \begin{itemize}
+            \item Офис
+            \item Серверная
+            \item Корпоративный мессенджер
+            \item Корпоративная почта
+            \item Корпоративный VPN
+            \item Корпоративный портал поддержки
+            \item Система мониторинга (Zabbix)
+            \item База знаний (Confluence)
+            \item Репозиторий (Microsoft Azure)
+            \item CI/CD (Hive)
+            \item Инструменты QA (Asgard)
+            \item Сервис для моделирование макетов (Figma)
+            \item Трекер задач и требований (Microsoft Azure)
+            \item CRM-система (Customer Relationship Management)
+            \item ERP-система (Enterprise Risk Management)
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Разрешения (P)}
+    Введём для выбранных активов основные разрешения в общем виде:
+    \begin{itemize}
+        \item Офис: доступ в офис в любое время, доступ к оборудованию (принтерам/сканерам).
+        \item Серверная: доступ в серверную.
+        \item Корпоративный мессенджер: аккаунт с доступом к общим чатам команд и возможность написать каждому сотруднику.
+        \item Корпоративная почта: личный ящик (отправка/получение), доступ к общим папкам, регистрация в корпоративных сервисах.
+        \item Корпоративный VPN: удаленный доступ к корпоративной сети.
+        \item Корпоративный портал поддержки: создание тикетов, просмотр истории обращений.
+        \item Система мониторинга: просмотр метрик, изменение метрик и настройка оповещений.
+        \item База знаний: просмотр/редактирование страниц.
+        \item Репозиторий: просмотр кода, отправление коммитов, создание веток и Pull Request'ов.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Разрешения (P)}
+    \begin{itemize}
+        \item CI/CD: запуск сборок и изменение конфигурации pipeline.
+        \item Инструменты QA: редактирование и запуск тестов, просмотр отчетов.
+        \item Сервис для моделирование макетов (Figma): просмотр макетов, редактирование и создание компонентов.
+        \item Трекер задач и требований: создание задач и требований, изменение статусов, назначение исполнителей.
+        \item CRM-система: просмотр контактов клиентов, редактирование сделок, генерация отчетов.
+        \item ERP-система: ввод данных, выполнение финансовых операций, просмотр аналитики.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Роли (R)}
+    Определим роли, исходя из классов эквивалентности по разрешениям. Но перед этим определим общие разрешения, которые будут у каждой роли (иерархия ролей: роль - сотрудник):
+    \begin{itemize}
+        \item Доступ в офис в любое время, доступ к оборудованию (принтерам/сканерам).
+        \item Аккаунт в мессенджере с доступом к общим чатам команд и возможность написать каждому сотруднику.
+        \item Личный ящик (отправка/получение), доступ к общим папкам, регистрация в корпоративных сервисах.
+        \item Доступ к корпоративному VPN.
+        \item Cоздание тикетов и просмотр истории обращений на внутреннем портале поддержки.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Роли (R, UA + PA)}
+    \begin{itemize}
+        \item Officer (CEO, CTO, COO) - доступ к аналитике CRM/ERP, трекеру задач и требований, доступ к базе знаний.
+        \item Project Manager (PM) - трекер задач и требований, доступ к базе знаний.
+        \item TechLead - просмотр кода, создание задач и изменение статусов, доступ к базе знаний, изменение конфигурации pipeline'ов, настройка оповещений системы мониторинга.
+        \item Developer (Senior, Middle, Junior) - просмотр кода, отправление коммитов, создание веток и Pull Request'ов, создание задач и изменение статусов, доступ к базе знаний, запуск pipeline'ов
+        \item QA Engineer - доступ в серверную, редактирование и запуск тестов, просмотр кода, отправление коммитов, создание веток и Pull Request'ов, создание баг-задач, доступ к базе знаний.
+        \item DevOps Engineer - доступ в серверную, изменение конфигурации pipeline'ов, настройка системы мониторинга, создание задач и изменение статусов.
+        \item UI/UX Designer - просмотр макетов, редактирование и создание компонентов, создание задач и изменение статусов.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Роли (R, UA + PA)}
+    \begin{itemize}
+        \item Сис. админ - доступ в серверную, настройка VPN и других корпоративных сервисов.
+        \item Support - закрытие тикетов на портале поддержки.
+        \item Business Manager (Product, Sales, Marketing Managers) - доступ к аналитике CRM/ERP, редактирование данных в CRM.
+        \item CFO - доступ к аналитике CRM/ERP, редактирование данных в ERP.
+        \item HR - доступ к базе знаний (HR-документов).
+        \item Office Manager - управление оборудованием, ввод данных по закупкам в ERP.
+        \item Data Analyst - доступ к аналитике CRM/ERP, просмотр метрик из системы мониторинга.
+        \item Legal Advisor - доступ к базе знаний (юридические документы).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ограничения}
+    \begin{itemize}
+        \item Взаимное исключение ролей:
+        \begin{itemize}
+            \item Сотрудник не может иметь одновременно две роли QA Engineer и Developer
+            \item Сотрудник не может иметь одновременно две роли CFO и Office Manager
+            \item Сотрудник не может иметь техническую роль и менеджерскую роль.
+        \end{itemize}
+        \item Количественное ограничение ролей:
+        \begin{itemize}
+            \item Не более 3 сотрудников в роли Officer.
+            \item Минимум 1 сотрудник в роли DevOps.
+            \item Сотрудников с ролью QA не меньше, чем в 5 раз, чем Developer'ов.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Административные роли (AP, AR, APA, AUA)}
+    \begin{itemize}
+        \item Role Administrator (CEO) - назначать/отзывать роли пользователям.
+        \begin{itemize}
+            \item can-assign:
+            \begin{itemize}
+                \item Officer: сотрудник должен иметь стаж в компании ≥ 5 лет и подтверждение от совета директоров.
+                \item Project Manager: пользователь должен получить рекомендацию хотя бы от одного Officer.
+                \item TechLead: сотрудник должен иметь роль Developer ≥ 5 лет.
+                \item DevOps: пользователь должен пройти сертификацию по облачным технологиям.
+                \item Business Manager: пользователь должен быть утвержден текущим CFO.
+                \item Остальные роли: пользователь должен успешно пройти интервью (получить 2 рекомендации из 3).
+            \end{itemize}
+            \item can-revoke:
+            \begin{itemize}
+                \item Officer: требуется согласие двух других Officer или совета директоров.
+                \item Остальные роли: уведомление от HR/выше стоящего менеджера и подтверждение причины отзыва роли.
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Административные роли (AP, AR, APA, AUA)}
+    \begin{itemize}
+        \item Policy Administrator (COO) - определять и настраивать статические и динамические ограничения для ролей RBAC.
+            \begin{itemize}
+                \item не участвует в назначении ролей и разрешений.
+            \end{itemize}
+        \item Service Administrator (Support) - предоставлять доступы к необходимым сервисам сотрудникам.
+        \begin{itemize}
+            \item can-assign и can-revoke:
+            \begin{itemize}
+                \item Все роли: при доставление доступа к указанным выше сервисам у соответствующей роли.
+            \end{itemize}
+        \end{itemize}
+        \item Security Administrator (Support) - блокировка пользователей при подозрительной активности.
+        \begin{itemize}
+            \item can-revoke:
+            \begin{itemize}
+                \item Все роли: при подозрительной активности пользователя отзывается роль до окончательного вынесения решения.
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\end{document}
