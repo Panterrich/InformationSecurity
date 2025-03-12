@@ -1,0 +1,299 @@
+\documentclass[10pt]{beamer}
+
+\usepackage{paratype}
+\RequirePackage{cmap}
+\RequirePackage[T2A]{fontenc}
+\RequirePackage[utf8]{inputenc}
+
+% Set up fonts
+%\RequirePackage{paratype} % Arial-like sans serif font
+%\RequirePackage{DejaVuSansMono} % Free widespread monospace font with cyrillic support
+%\RequirePackage{nimbussans} % Helvetica clone
+\RequirePackage[bold,light]{nimbusmono} % Courier clone
+%\RequirePackage{tempora}  % "Times" font
+
+\RequirePackage[english,russian]{babel}
+
+\usepackage{amsmath,mathrsfs,amsfonts,amssymb, mathtools}
+\usepackage{graphicx, epsfig}
+\usepackage{subfig}
+\usepackage{setspace}
+\usepackage{multirow}
+\captionsetup{labelformat=empty}
+\usepackage{wrapfig}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\usepackage{color, colortbl}
+\definecolor{lightRed}{RGB}{240, 170, 150}
+\definecolor{lightGreen}{RGB}{170, 230, 150}
+\definecolor{lightYellow}{RGB}{240, 230, 180}
+
+\usepackage{changepage}
+
+\setbeamerfont{frametitle}{size=\normalsize,family=\sffamily}
+\usetheme{Warsaw}%{Singapore}%{Warsaw}%{Warsaw}%{Darmstadt}
+\usecolortheme{sidebartab}
+\setbeamertemplate{footline}[author]
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+	\insertshorttitle\hfill%
+	\insertframenumber\,/\,\inserttotalframenumber}
+
+\definecolor{beamer@blendedblue}{RGB}{3,91,170}
+\setbeamercolor{color1}{bg=beamer@blendedblue,fg=white}
+% отключить клавиши навигации
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage{appendixnumberbeamer}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{gostyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    stringstyle=\color{codepurple},
+    frame=single
+}
+
+\usepackage{svg}
+\usepackage{todonotes}
+
+\AtBeginSection[]{}
+
+\setbeamertemplate{section in toc}{%
+  \alert{$\bullet$}~\inserttocsection}
+
+\graphicspath{{images/}{images2/}{../images/}}
+
+\usepackage{makecell}
+\usepackage{changepage}
+
+\title[]{Go. Memory-safe language.}
+%\subtitle{Подназвание доклада}
+
+\author{Дурнов Алексей Николаевич}
+
+% Russian
+\institute[МФТИ]{
+    Московский физико-технический институт\\
+    Физтех-школа радиотехники и компьютерных технологий\\
+}
+\vspace{100pt}
+\date{Москва, 2025 г.}
+
+% English
+% \institute{ISP RAS}
+% \titlegraphic{\hfill\includegraphics[height=0.5cm]{logo_isp_en.png}}
+
+\setbeamercolor{footline}{fg=black}
+\setbeamerfont{footline}{series=\bfseries}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+    \thispagestyle{empty}
+\end{frame}
+
+\begin{frame}{Cybersecurity and Infrastructure Security Agency (CISA)}
+    \begin{block}{}
+        The development of new product lines for use in service of critical infrastructure or NCFs in a memory-unsafe language (e.g., C or C++)
+        where readily available alternative memory-safe languages could be used is dangerous and significantly elevates risk to national security,
+        national economic security, and national public health and safety.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Безопасная работа с памятью}
+    \begin{block}{Автоматическое выделение памяти}
+    \begin{lstlisting}[style=gostyle, language=Golang]
+func EscapeAnalysis() *int {
+    // Local var "escape" into heap
+    x := 42
+    return &x
+}
+
+func StackAllocation() int {
+    // Stay in stack
+    y := 100
+    return y
+}
+    \end{lstlisting}
+    \end{block}
+    \begin{itemize}
+        \item Компилятор сам решает где размещать данные
+        \item Нет ручного управления (new/delete)
+    \end{itemize}
+    \end{frame}
+
+\begin{frame}[fragile]{}
+    \frametitle{Защита от переполнения буфера}
+    \begin{block}{Проверка границ слайсов}
+    \begin{lstlisting}[style=gostyle, language=Golang]
+func CheckBounds() {
+    data := []int{1, 2, 3}
+
+    value := data[5] // panic
+}
+    \end{lstlisting}
+    \end{block}
+    \begin{itemize}
+        \item Автоматическая проверка границ во время выполнения
+        \item Паника вместо неопределенного поведения
+        \item Возможность восстановления через recover()
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Защита от утечек ресурсов}
+    \begin{block}{Контекст с таймаутом}
+    \begin{lstlisting}[style=gostyle, language=Golang]
+func SafeResourceHandling() {
+    ctx, cancel := context.WithTimeout(
+        context.Background(),
+        2*time.Second,
+    )
+    defer cancel()
+
+    req, _ := http.NewRequestWithContext(
+        ctx,
+        "GET",
+        "https://example.com",
+        nil,
+    )
+
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+
+    // Response processing
+}
+    \end{lstlisting}
+    \end{block}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Конкурентность из "коробки"}
+        \begin{block}{Синхронизация горутин}
+        \begin{lstlisting}[style=gostyle, language=Golang]
+func SafeConcurrency() {
+    var wg sync.WaitGroup
+    sharedMap := make(map[int]string)
+    var mu sync.Mutex
+
+    for i := 0; i < 10; i++ {
+        wg.Add(1)
+        go func(idx int) {
+            defer wg.Done()
+            mu.Lock()
+            sharedMap[idx] = fmt.Sprintf("Data %d", idx)
+            mu.Unlock()
+        }(i)
+    }
+    wg.Wait()
+}
+        \end{lstlisting}
+        \end{block}
+        \end{frame}
+
+        \frametitle{Уязвимости при работе с CGO}
+        \begin{block}{Прямой доступ к памяти через C}
+        \begin{lstlisting}[style=gostyle, language=Golang]
+/*
+#include <stdlib.h>
+*/
+import "C"
+import "unsafe"
+
+func unsafeAlloc() {
+    ptr := C.malloc(1024)
+    // Memory leak without free
+    // C.free(unsafe.Pointer(ptr))
+
+    // Unsafe conversion
+    data := (*byte)(unsafe.Pointer(ptr))
+    *data = 255
+}
+        \end{lstlisting}
+        \end{block}
+        \begin{itemize}
+            \item Прямой доступ к сырой памяти через unsafe
+            \item Риск утечек и повреждения памяти
+            \item Потеря всех гарантий безопасности Go
+        \end{itemize}
+        \end{frame}
+
+        \begin{frame}[fragile]
+        \frametitle{Утечка горутин}
+        \begin{block}{Необработанные задачи}
+        \begin{lstlisting}[style=gostyle, language=Golang]
+func WorkerPoolLeak() {
+    jobs := make(chan int, 100)
+
+    // Start workers
+    for i := 0; i < 5; i++ {
+        go func() {
+            for job := range jobs {
+                process(job)
+            }
+        }()
+    }
+
+    for i := 0; i < 10; i++ {
+        jobs <- i
+    }
+
+    // Forgot to close the jobs channel
+    // The workers continue to wait for the task
+}
+        \end{lstlisting}
+        \end{block}
+        \end{frame}
+
+\end{document}

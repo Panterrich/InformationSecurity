@@ -1,0 +1,24 @@
+\frametitle{Утечка горутин}
+        \begin{block}{Необработанные задачи}
+        \begin{lstlisting}[style=gostyle, language=Golang]
+func WorkerPoolLeak() {
+    jobs := make(chan int, 100)
+
+    // Start workers
+    for i := 0; i < 5; i++ {
+        go func() {
+            for job := range jobs {
+                process(job)
+            }
+        }()
+    }
+
+    for i := 0; i < 10; i++ {
+        jobs <- i
+    }
+
+    // Forgot to close the jobs channel
+    // The workers continue to wait for the task
+}
+        \end{lstlisting}
+        \end{block}
